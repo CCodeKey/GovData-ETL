@@ -46,7 +46,7 @@ git clone https://github.com/CCodeKey/GovData-ETL
 ```bash
 docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=govData -p 3306:3306 mysql
 ```
-### 3. Subir o BD com Docker
+### 3. Executar a aplicação
 ```bash
 mvn spring-boot:run
 ```
