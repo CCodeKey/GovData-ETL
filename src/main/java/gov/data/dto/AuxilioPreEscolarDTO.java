@@ -1,5 +1,6 @@
 package gov.data.dto;
 
+import com.opencsv.bean.CsvBindByName;
 /**
  * Representa o esquema original do CSV de Auxílio Pré-Escolar.
  * Responsável por capturar os dados brutos antes do tratamento e normalização.
@@ -7,17 +8,40 @@ package gov.data.dto;
 public class AuxilioPreEscolarDTO {
 
     // Campos baseados nas colunas do arquivo dados.gov.br
-    private String coOrgao;          // Código do Órgão
-    private String noOrgao;          // Nome do Órgão
-    private String noUorg;           // Nome da Unidade Organizacional
-    private String noMunicipioUorg;  // Município (Para desmembramento de endereço)
-    private String ufUorg;           // UF
-    private String matServ;          // Matrícula do Servidor (ID original)
-    private String noServidor;       // Nome do Servidor
-    private String grupoCargo;       // Grupo do Cargo (Alvo de tratamento de nulos)
-    private String cargoFuncao;      // Cargo/Função (Alvo de identificação de sinônimos)
-    private String valorAuxilio;     // Valor do Auxílio (String para evitar erro de parse inicial)
-    private String cotaParte;        // Desconto da Cota Parte
+
+    @CsvBindByName(column = "CO_ORGAO")
+    private String coOrgao;
+
+    @CsvBindByName(column = "NO_ORGAO")
+    private String noOrgao;
+
+    @CsvBindByName(column = "NO_UORG")
+    private String noUorg;
+
+    @CsvBindByName(column = "NO_MUNICIPIO_UORG")
+    private String noMunicipioUorg;
+
+    @CsvBindByName(column = "UF_UORG")
+    private String ufUorg;
+
+    @CsvBindByName(column = "MAT_SERV")
+    private String matServ;
+
+    @CsvBindByName(column = "NO_SERVIDOR")
+    private String noServidor;
+
+    @CsvBindByName(column = "GRUPO_CARGO")
+    private String grupoCargo;
+
+    @CsvBindByName(column = "CARGO_FUNCAO")
+    private String cargoFuncao;
+
+    @CsvBindByName(column = "AUX_PRE_ESCOLAR")
+    private String valorAuxilio;
+
+    @CsvBindByName(column = "DESC_COTA_PARTE")
+    private String cotaParte;
+
 
     // Construtor padrão
     public AuxilioPreEscolarDTO() {
