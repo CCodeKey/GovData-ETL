@@ -48,7 +48,7 @@ public class CargaDadosService {
             int contador = 0;
 
             for (AuxilioPreEscolarDTO dto : dtos) {
-                // LIMITE: 5.000 registros para fins didáticos, poupa 29 minutos de tempo de vida
+                // LIMITE para segurança do hardware durante a apresentação
                 if (contador >= 5000) break;
 
                 try {
@@ -69,7 +69,7 @@ public class CargaDadosService {
                             })
                     );
 
-                    // 2. Localidade com Cache e Flush
+                    // 2. Localidade (Correção do erro de sintaxe)
                     String m = dto.getNoMunicipioUorg().trim().toUpperCase();
                     String u = dto.getUfUorg().trim().toUpperCase();
                     String localKey = m + "|" + u;
@@ -83,7 +83,7 @@ public class CargaDadosService {
                                     })
                     );
 
-                    // 3. Servidor com Flush
+                    // 3. Servidor (Preenchendo o grupo_cargo)
                     int matricula = Integer.parseInt(dto.getMatServ());
                     Servidor servidor = servidorRepository.findById(matricula).orElseGet(() -> {
                         Servidor s = new Servidor();
@@ -91,7 +91,11 @@ public class CargaDadosService {
                         s.setNoServidor(dto.getNoServidor());
                         s.setOrgao(orgao);
                         s.setLocalidade(local);
-                        s.setCargoFuncao(padronizarCargo(dto.getCargoFuncao()));
+
+                        // Aqui preenchemos as duas colunas:
+                        s.setCargoFuncao(dto.getCargoFuncao()); // Nome bruto
+                        s.setGrupoCargo(padronizarCargo(dto.getCargoFuncao())); // Categoria tratada
+
                         return servidorRepository.saveAndFlush(s);
                     });
 
@@ -105,7 +109,6 @@ public class CargaDadosService {
 
                     contador++;
 
-                    // Feedback visual a cada 1000 linhas para não parecer que travou
                     if (contador % 1000 == 0) {
                         System.out.println("Processados: " + contador + " registros...");
                     }
@@ -117,7 +120,7 @@ public class CargaDadosService {
 
             long fim = System.currentTimeMillis();
             System.out.println("SUCESSO! Foram carregados " + contador + " registros.");
-            System.out.println("Tempo total de processamento: " + (fim - inicio) / 1000 + " segundos.");
+            System.out.println("Tempo total: " + (fim - inicio) / 1000 + " segundos.");
 
         } catch (Exception e) {
             System.err.println("Erro crítico na carga: " + e.getMessage());
@@ -129,7 +132,10 @@ public class CargaDadosService {
         String c = cargo.toUpperCase();
         if (c.contains("PROF") || c.contains("DOCENTE")) return "PROFESSOR";
         if (c.contains("ADM") || c.contains("ANALISTA")) return "ADMINISTRATIVO";
+        if (c.contains("AUX")) return "AUXILIAR";
         if (c.contains("TEC")) return "TECNICO";
+        if (c.contains("AGEN")) return "AGENTE";
+        if (c.contains("MOT")) return "MOTORISTA";
         return c;
     }
 }
