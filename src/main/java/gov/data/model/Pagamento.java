@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "pagamento")
 public class Pagamento {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,10 +14,17 @@ public class Pagamento {
 
     private Double cotaParte;
 
-    @OneToOne
+    // Novo campo para evitar o erro de compilação no Service
+    private String mesReferencia;
+
+    @ManyToOne
     @JoinColumn(name = "servidor_id")
     private Servidor servidor;
 
+    public Pagamento() {
+    }
+
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -39,6 +47,14 @@ public class Pagamento {
 
     public void setCotaParte(Double cotaParte) {
         this.cotaParte = cotaParte;
+    }
+
+    public String getMesReferencia() {
+        return mesReferencia;
+    }
+
+    public void setMesReferencia(String mesReferencia) {
+        this.mesReferencia = mesReferencia;
     }
 
     public Servidor getServidor() {

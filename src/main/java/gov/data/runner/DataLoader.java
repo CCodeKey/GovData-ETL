@@ -13,9 +13,6 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("=== SISTEMA INICIALIZADO ===");
-
-        // Chama o método que criamos no Service
         cargaDadosService.carregarDadosIniciais();
     }
 }
