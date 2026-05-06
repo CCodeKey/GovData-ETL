@@ -49,27 +49,40 @@ public class CargaDadosService {
                     .parse();
 
             for (AuxilioPreEscolarDTO dto : dtos) {
+
                 // 1. Tratamento de Nulos
                 String grupoCargo = (dto.getGrupoCargo() == null || dto.getGrupoCargo().isBlank())
-                        ? "NÃO INFORMADO" : dto.getGrupoCargo().toUpperCase();
+                        ? "NÃO INFORMADO"
+                        : dto.getGrupoCargo().trim().toUpperCase();
 
                 // 2. Padronização de Sinônimos
                 String cargoTratado = padronizarCargo(dto.getCargoFuncao());
 
                 // 3. Persistência Normalizada
-                // Criando Órgão
-                Orgao orgao = new Orgao();
-                orgao.setCoOrgao(Integer.parseInt(dto.getCoOrgao()));
-                orgao.setNoOrgao(dto.getNoOrgao());
-                orgao = orgaoRepository.save(orgao);
+                // ORGAO
+                Integer coOrgao = Integer.parseInt(dto.getCoOrgao());
+                Orgao orgao = orgaoRepository.findById(coOrgao)
+                        .orElseGet(() -> {
+                            Orgao novo = new Orgao();
+                            novo.setCoOrgao(coOrgao);
+                            novo.setNoOrgao(dto.getNoOrgao());
+                            return orgaoRepository.save(novo);
+                        });
 
-                // Criando Localidade
-                Localidade local = new Localidade();
-                local.setMunicipio(dto.getNoMunicipioUorg());
-                local.setUf(dto.getUfUorg());
-                local = localidadeRepository.save(local);
+                // LOCALIDADE
+                String municipio = dto.getNoMunicipioUorg().trim().toUpperCase();
+                String uf = dto.getUfUorg().trim().toUpperCase();
 
-                // Criando Servidor
+                Localidade local = localidadeRepository
+                        .findByMunicipioAndUf(municipio, uf)
+                        .orElseGet(() -> {
+                            Localidade nova = new Localidade();
+                            nova.setMunicipio(municipio);
+                            nova.setUf(uf);
+                            return localidadeRepository.save(nova);
+                        });
+
+                // SERVIDOR
                 Servidor servidor = new Servidor();
                 servidor.setMatServ(Integer.parseInt(dto.getMatServ()));
                 servidor.setNoServidor(dto.getNoServidor());
@@ -80,7 +93,6 @@ public class CargaDadosService {
 
                 servidorRepository.save(servidor);
             }
-
             System.out.println("Carga finalizada com sucesso: " + dtos.size() + " registros.");
 
         } catch (Exception e) {
