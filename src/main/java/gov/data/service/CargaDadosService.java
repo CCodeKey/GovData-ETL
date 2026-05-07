@@ -2,8 +2,15 @@ package gov.data.service;
 
 import com.opencsv.bean.CsvToBeanBuilder;
 import gov.data.dto.AuxilioPreEscolarDTO;
-import gov.data.model.*;
-import gov.data.model.repository.*;
+import gov.data.model.Localidade;
+import gov.data.model.Orgao;
+import gov.data.model.Pagamento;
+import gov.data.model.Servidor;
+import gov.data.model.repository.LocalidadeRepository;
+import gov.data.model.repository.OrgaoRepository;
+import gov.data.model.repository.PagamentoRepository;
+import gov.data.model.repository.ServidorRepository;
+import gov.data.util.CsvWriterUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +55,8 @@ public class CargaDadosService {
             long inicio = System.currentTimeMillis();
             int contador = 0;
 
+            List<String[]> dadosTratados = new ArrayList<>();
+
             for (AuxilioPreEscolarDTO dto : dtos) {
                 // LIMITE para segurança do hardware durante a apresentação
                 if (contador >= 5000) break;
@@ -65,7 +75,7 @@ public class CargaDadosService {
                                 Orgao n = new Orgao();
                                 n.setCoOrgao(id);
                                 n.setNoOrgao(dto.getNoOrgao());
-                                return orgaoRepository.saveAndFlush(n);
+                                return orgaoRepository.save(n);
                             })
                     );
 
@@ -79,7 +89,7 @@ public class CargaDadosService {
                                         Localidade n = new Localidade();
                                         n.setMunicipio(m);
                                         n.setUf(u);
-                                        return localidadeRepository.saveAndFlush(n);
+                                        return localidadeRepository.save(n);
                                     })
                     );
 
@@ -96,7 +106,7 @@ public class CargaDadosService {
                         s.setCargoFuncao(dto.getCargoFuncao()); // Nome bruto
                         s.setGrupoCargo(padronizarCargo(dto.getCargoFuncao())); // Categoria tratada
 
-                        return servidorRepository.saveAndFlush(s);
+                        return servidorRepository.save(s);
                     });
 
                     // 4. Pagamento
@@ -105,7 +115,7 @@ public class CargaDadosService {
                     p.setValorAuxilio(vAux);
                     p.setCotaParte(vCota);
                     p.setMesReferencia("2026-02");
-                    pagamentoRepository.saveAndFlush(p);
+                    pagamentoRepository.save(p);
 
                     contador++;
 
@@ -113,10 +123,18 @@ public class CargaDadosService {
                         System.out.println("Processados: " + contador + " registros...");
                     }
 
+                    dadosTratados.add(new String[]{ dto.getCoOrgao(), dto.getNoOrgao(), m, u, dto.getMatServ(),
+                            dto.getNoServidor(), padronizarCargo(dto.getCargoFuncao()), dto.getCargoFuncao(),
+                            String.valueOf(vAux), String.valueOf(vCota)
+                    });
+
                 } catch (Exception e) {
+                    System.err.println("Erro ao processar registro: " + e.getMessage());
                     continue;
                 }
             }
+
+            CsvWriterUtil.escreverCsvTratado( dadosTratados);
 
             long fim = System.currentTimeMillis();
             System.out.println("SUCESSO! Foram carregados " + contador + " registros.");
