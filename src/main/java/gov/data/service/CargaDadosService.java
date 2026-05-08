@@ -134,7 +134,7 @@ public class CargaDadosService {
                 }
             }
 
-            CsvWriterUtil.escreverCsvTratado( dadosTratados);
+            CsvWriterUtil.escreverCsvTratado(dadosTratados);
 
             long fim = System.currentTimeMillis();
             System.out.println("SUCESSO! Foram carregados " + contador + " registros.");
