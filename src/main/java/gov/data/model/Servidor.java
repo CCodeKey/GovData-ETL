@@ -2,6 +2,8 @@ package gov.data.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "servidor")
 public class Servidor {
@@ -22,8 +24,10 @@ public class Servidor {
     @JoinColumn(name = "localidade_id")
     private Localidade localidade;
 
-    @OneToOne(mappedBy = "servidor", cascade = CascadeType.ALL)
-    private Pagamento pagamento;
+    /*@OneToOne(mappedBy = "servidor", cascade = CascadeType.ALL)
+    private Pagamento pagamento;*/
+    @OneToMany(mappedBy = "servidor", cascade = CascadeType.ALL)
+    private List<Pagamento> pagamentos;
 
     public Integer getMatServ() {
         return matServ;
@@ -73,11 +77,11 @@ public class Servidor {
         this.localidade = localidade;
     }
 
-    public Pagamento getPagamento() {
-        return pagamento;
+    public List<Pagamento> getPagamentos() {
+        return pagamentos;
     }
 
-    public void setPagamento(Pagamento pagamento) {
-        this.pagamento = pagamento;
+    public void setPagamentos(List<Pagamento> pagamentos) {
+        this.pagamentos = pagamentos;
     }
 }
