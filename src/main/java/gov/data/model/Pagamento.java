@@ -14,7 +14,6 @@ public class Pagamento {
 
     private Double cotaParte;
 
-    // Novo campo para evitar o erro de compilação no Service
     private String mesReferencia;
 
     @ManyToOne
@@ -24,7 +23,6 @@ public class Pagamento {
     public Pagamento() {
     }
 
-    // Getters e Setters
     public Long getId() {
         return id;
     }

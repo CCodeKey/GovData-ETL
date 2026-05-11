@@ -24,8 +24,6 @@ public class Servidor {
     @JoinColumn(name = "localidade_id")
     private Localidade localidade;
 
-    /*@OneToOne(mappedBy = "servidor", cascade = CascadeType.ALL)
-    private Pagamento pagamento;*/
     @OneToMany(mappedBy = "servidor", cascade = CascadeType.ALL)
     private List<Pagamento> pagamentos;
 
