@@ -8,7 +8,7 @@ Aplicação desenvolvida para a disciplina de Banco de Dados II com foco em:
 - Normalização de dados
 - Modelagem relacional
 
-A aplicação lê um arquivo CSV de dados públicos disponíveis na plataforma de dados abertos do [governo federal](https://dados.gov.br), e persiste as informações em um banco relacional utilizando Spring Boot + JPA + MySQL.
+A aplicação realiza um processo de ETL sobre arquivos CSV de dados públicos de **auxílio pré-escolar** e **pagamento de servidores** (disponíveis na plataforma do [governo federal](https://dados.gov.br)) e persiste as informações em um banco relacional MySQL utilizando Spring Boot.
 
 ---
 
@@ -17,7 +17,9 @@ A aplicação lê um arquivo CSV de dados públicos disponíveis na plataforma d
 1. Lê o arquivo CSV ao iniciar
 2. Trata dados (nulos, inconsistências)
 3. Normaliza as informações
-4. Salva no banco automaticamente
+4. Salva os dados no banco automaticamente
+5. Gera um novo arquivo CSV com os dados tratados 
+
 
 ---
 
@@ -32,10 +34,16 @@ A aplicação lê um arquivo CSV de dados públicos disponíveis na plataforma d
 - Spring Data JPA
 - Hibernate
 - MySQL
-- OpenCSV
+- Thymeleaf
 
 ---
+## Antes de executar
+Crie o diretório  **/output** em:
+```bash
+src/main/resources/data/output/
+```
 
+---
 ## 🚀 Execução
 ### 1. Clonar o projeto
 ```bash

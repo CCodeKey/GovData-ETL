@@ -26,10 +26,14 @@ import java.util.Map;
 @Service
 public class CargaDadosService {
 
-    @Autowired private ServidorRepository servidorRepository;
-    @Autowired private OrgaoRepository orgaoRepository;
-    @Autowired private LocalidadeRepository localidadeRepository;
-    @Autowired private PagamentoRepository pagamentoRepository;
+    @Autowired
+    private ServidorRepository servidorRepository;
+    @Autowired
+    private OrgaoRepository orgaoRepository;
+    @Autowired
+    private LocalidadeRepository localidadeRepository;
+    @Autowired
+    private PagamentoRepository pagamentoRepository;
 
     private final Map<Integer, Orgao> orgaoCache = new HashMap<>();
     private final Map<String, Localidade> localidadeCache = new HashMap<>();
@@ -58,7 +62,6 @@ public class CargaDadosService {
             List<String[]> dadosTratados = new ArrayList<>();
 
             for (AuxilioPreEscolarDTO dto : dtos) {
-                // LIMITE para segurança do hardware durante a apresentação
                 if (contador >= 5000) break;
 
                 try {
@@ -68,7 +71,6 @@ public class CargaDadosService {
                     double vCota = Double.parseDouble(dto.getCotaParte().replace(",", "."));
                     if (vAux <= 0) continue;
 
-                    // 1. Órgão com Cache e Flush
                     Integer coOrgao = Integer.parseInt(dto.getCoOrgao());
                     Orgao orgao = orgaoCache.computeIfAbsent(coOrgao, id ->
                             orgaoRepository.findById(id).orElseGet(() -> {
@@ -79,7 +81,6 @@ public class CargaDadosService {
                             })
                     );
 
-                    // 2. Localidade (Correção do erro de sintaxe)
                     String m = dto.getNoMunicipioUorg().trim().toUpperCase();
                     String u = dto.getUfUorg().trim().toUpperCase();
                     String localKey = m + "|" + u;
@@ -93,7 +94,6 @@ public class CargaDadosService {
                                     })
                     );
 
-                    // 3. Servidor (Preenchendo o grupo_cargo)
                     int matricula = Integer.parseInt(dto.getMatServ());
                     Servidor servidor = servidorRepository.findById(matricula).orElseGet(() -> {
                         Servidor s = new Servidor();
@@ -102,14 +102,12 @@ public class CargaDadosService {
                         s.setOrgao(orgao);
                         s.setLocalidade(local);
 
-                        // Aqui preenchemos as duas colunas:
-                        s.setCargoFuncao(dto.getCargoFuncao()); // Nome bruto
-                        s.setGrupoCargo(padronizarCargo(dto.getCargoFuncao())); // Categoria tratada
+                        s.setCargoFuncao(dto.getCargoFuncao());
+                        s.setGrupoCargo(padronizarCargo(dto.getCargoFuncao()));
 
                         return servidorRepository.save(s);
                     });
 
-                    // 4. Pagamento
                     Pagamento p = new Pagamento();
                     p.setServidor(servidor);
                     p.setValorAuxilio(vAux);
@@ -133,7 +131,6 @@ public class CargaDadosService {
                     continue;
                 }
             }
-
             CsvWriterUtil.escreverCsvTratado(dadosTratados);
 
             long fim = System.currentTimeMillis();

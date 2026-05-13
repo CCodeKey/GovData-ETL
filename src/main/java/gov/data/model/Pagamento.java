@@ -20,8 +20,7 @@ public class Pagamento {
     @JoinColumn(name = "servidor_id")
     private Servidor servidor;
 
-    public Pagamento() {
-    }
+    public Pagamento() {}
 
     public Long getId() {
         return id;

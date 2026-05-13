@@ -9,5 +9,4 @@ public class GovDataEtlProjectApplication {
     public static void main(String[] args) {
         SpringApplication.run(GovDataEtlProjectApplication.class, args);
     }
-
 }

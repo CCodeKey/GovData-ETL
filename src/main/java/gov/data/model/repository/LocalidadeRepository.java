@@ -7,5 +7,4 @@ import java.util.Optional;
 
 public interface LocalidadeRepository extends JpaRepository<Localidade, Long> {
     Optional<Localidade> findByMunicipioAndUf(String municipio, String uf);
-
 }

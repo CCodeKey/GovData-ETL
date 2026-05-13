@@ -1,13 +1,8 @@
 package gov.data.dto;
 
 import com.opencsv.bean.CsvBindByName;
-/**
- * Representa o esquema original do CSV de Auxílio Pré-Escolar.
- * Responsável por capturar os dados brutos antes do tratamento e normalização.
- */
-public class AuxilioPreEscolarDTO {
 
-    // Campos baseados nas colunas do arquivo dados.gov.br
+public class AuxilioPreEscolarDTO {
 
     @CsvBindByName(column = "CO_ORGAO")
     private String coOrgao;
@@ -42,12 +37,8 @@ public class AuxilioPreEscolarDTO {
     @CsvBindByName(column = "DESC_COTA_PARTE")
     private String cotaParte;
 
+    public AuxilioPreEscolarDTO() {}
 
-    // Construtor padrão
-    public AuxilioPreEscolarDTO() {
-    }
-
-    // Getters e Setters
     public String getCoOrgao() { return coOrgao; }
     public void setCoOrgao(String coOrgao) { this.coOrgao = coOrgao; }
 
